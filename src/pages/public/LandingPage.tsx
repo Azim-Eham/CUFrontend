@@ -63,7 +63,7 @@ export default function LandingPage() {
           <div className="flex flex-col items-center text-center">
             <GraduationCap className="mb-6 h-16 w-16 text-accent-500" />
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              CU Connect
+              CUPC
             </h1>
             <p className="mt-4 max-w-xl text-lg text-primary-200">
               Where CU Students &amp; Alumni Meet
@@ -92,7 +92,7 @@ export default function LandingPage() {
       {/* Features */}
       <section className="py-20">
         <PageWrapper maxWidth="lg">
-          <h2 className="text-center text-3xl font-bold text-gray-900">Why CU Connect?</h2>
+          <h2 className="text-center text-3xl font-bold text-gray-900">Why CUPC?</h2>
           <p className="mx-auto mt-3 max-w-2xl text-center text-gray-500">
             Everything you need to stay connected and grow together.
           </p>

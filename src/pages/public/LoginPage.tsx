@@ -50,7 +50,7 @@ export default function LoginPage() {
     <PageWrapper maxWidth="sm" className="flex min-h-[calc(100vh-12rem)] items-center justify-center">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-center text-2xl">Log in to CU Connect</CardTitle>
+          <CardTitle className="text-center text-2xl">Log in to CUPC</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input

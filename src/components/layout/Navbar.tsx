@@ -23,7 +23,7 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link to={isAuthenticated ? dashboardPath : "/"} className="flex items-center gap-2">
           <GraduationCap className="h-8 w-8 text-primary-950" />
-          <span className="text-xl font-bold text-primary-950">CU Connect</span>
+          <span className="text-xl font-bold text-primary-950">CUPC</span>
         </Link>
 
         {/* Desktop */}

@@ -37,7 +37,11 @@ export default function ManageStudents() {
         searchTerm: debouncedSearch || undefined,
       });
       const data: PaginatedResponse<Student> = res.data;
-      setStudents(data.data.result);
+      const activeStudents = data.data.result.filter((s) => {
+        const user = typeof s.userId === "object" ? s.userId : null;
+        return user && !user.isDeleted;
+      });
+      setStudents(activeStudents);
       setMeta({ total: data.data.meta.total, totalPage: data.data.meta.totalPage });
     } catch {
       toast.error("Failed to fetch students");

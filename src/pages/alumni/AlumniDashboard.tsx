@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { postApi } from "@/api/post.api";
+import { alumniApi } from "@/api/alumni.api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { usePagination } from "@/hooks/usePagination";
 import type { Post } from "@/types/post.types";
@@ -19,6 +20,7 @@ export default function AlumniDashboard() {
   const { user } = useAuthStore();
   const { page, limit, goToPage } = usePagination();
 
+  const [name, setName] = useState("");
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const debouncedSearch = useDebounce(search);
@@ -26,6 +28,12 @@ export default function AlumniDashboard() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [totalPage, setTotalPage] = useState(1);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    alumniApi.getMe().then((res) => {
+      setName(res.data.data.name);
+    }).catch(() => {});
+  }, []);
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
@@ -58,7 +66,7 @@ export default function AlumniDashboard() {
     <PageWrapper>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">
-          Welcome back, {user?.email?.split("@")[0] || "Alumni"}
+          Welcome back, {name || "Alumni"}
         </h1>
         <p className="mt-1 text-sm text-gray-500">
           Browse posts from the community
