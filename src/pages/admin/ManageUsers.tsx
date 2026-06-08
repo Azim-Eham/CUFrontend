@@ -32,6 +32,7 @@ export default function ManageUsers() {
   const [roleFilter, setRoleFilter] = useState("");
   const debouncedSearch = useDebounce(searchTerm);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -85,9 +86,29 @@ export default function ManageUsers() {
     try {
       await userApi.delete(user._id);
       toast.success("User deleted");
+      setSelectedIds((prev) => prev.filter((id) => id !== user._id));
       fetchUsers();
     } catch {
       toast.error("Failed to delete user");
+    }
+  };
+
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [debouncedSearch, roleFilter]);
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Delete ${selectedIds.length} selected users?`)) return;
+    setLoading(true);
+    try {
+      await Promise.all(selectedIds.map((id) => userApi.delete(id)));
+      toast.success("Selected users deleted successfully");
+      setSelectedIds([]);
+      fetchUsers();
+    } catch {
+      toast.error("Failed to delete some users");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,23 +119,40 @@ export default function ManageUsers() {
         <p className="mt-1 text-sm text-gray-500">View and manage user accounts</p>
       </div>
 
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <SearchBar
-          value={searchTerm}
-          onChange={setSearchTerm}
-          placeholder="Search by email..."
-          className="max-w-md"
-        />
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        >
-          <option value="">All Roles</option>
-          <option value="student">Student</option>
-          <option value="alumni">Alumni</option>
-          <option value="admin">Admin</option>
-        </select>
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center flex-1">
+          <SearchBar
+            value={searchTerm}
+            onChange={setSearchTerm}
+            placeholder="Search by email..."
+            className="max-w-md w-full"
+          />
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          >
+            <option value="">All Roles</option>
+            <option value="student">Student</option>
+            <option value="alumni">Alumni</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        {selectedIds.length > 0 && (
+          <div className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-lg py-1.5 px-3 animate-fadeInUp">
+            <span className="text-xs font-semibold text-red-700">
+              {selectedIds.length} selected
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs text-red-600 border-red-200 hover:bg-red-650 hover:text-red-700 py-1 h-auto"
+              onClick={handleBulkDelete}
+            >
+              Bulk Delete
+            </Button>
+          </div>
+        )}
       </div>
 
       {loading ? (
@@ -130,6 +168,20 @@ export default function ManageUsers() {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-200 bg-gray-50">
+                  <th className="px-4 py-3 font-medium text-gray-650 w-12">
+                    <input
+                      type="checkbox"
+                      checked={users.length > 0 && selectedIds.length === users.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedIds(users.map((u) => u._id));
+                        } else {
+                          setSelectedIds([]);
+                        }
+                      }}
+                      className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+                    />
+                  </th>
                   <th className="px-4 py-3 font-medium text-gray-600">ID</th>
                   <th className="px-4 py-3 font-medium text-gray-600">Email</th>
                   <th className="px-4 py-3 font-medium text-gray-600">Role</th>
@@ -142,8 +194,22 @@ export default function ManageUsers() {
                 {users.map((user) => (
                   <tr
                     key={user._id}
-                    className="hover:bg-gray-50 transition-colors"
+                    className={`hover:bg-gray-50 transition-colors ${selectedIds.includes(user._id) ? "bg-primary-50/40" : ""}`}
                   >
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(user._id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedIds((prev) => [...prev, user._id]);
+                          } else {
+                            setSelectedIds((prev) => prev.filter((id) => id !== user._id));
+                          }
+                        }}
+                        className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+                      />
+                    </td>
                     <td className="px-4 py-3 font-mono text-xs text-gray-700">
                       {user._id.slice(0, 8)}...
                     </td>

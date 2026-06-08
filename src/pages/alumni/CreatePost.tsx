@@ -37,6 +37,7 @@ export default function CreatePost() {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
@@ -114,6 +115,10 @@ export default function CreatePost() {
                 placeholder="Write your post content..."
                 {...register("description")}
               />
+              <div className="mt-1 flex justify-between text-xs text-gray-400">
+                <span>Min. 1 character</span>
+                <span>{(watch("description") || "").length} characters</span>
+              </div>
               {errors.description?.message && (
                 <p className="mt-1 text-xs text-red-600">{errors.description.message}</p>
               )}
@@ -133,33 +138,64 @@ export default function CreatePost() {
           </CardHeader>
           <div className="space-y-3">
             {fields.map((field, index) => (
-              <div key={field.id} className="flex gap-2">
-                <Select
-                  options={mediaTypeOptions}
-                  placeholder="Type"
-                  {...register(`media.${index}.mediaType`)}
-                  error={errors.media?.[index]?.mediaType?.message}
-                  className="w-32"
-                />
-                <Input
-                  placeholder="URL"
-                  {...register(`media.${index}.url`)}
-                  error={errors.media?.[index]?.url?.message}
-                  className="flex-1"
-                />
-                <Input
-                  placeholder="Caption (optional)"
-                  {...register(`media.${index}.caption`)}
-                  className="w-40"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => remove(index)}
-                >
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                </Button>
+              <div key={field.id} className="space-y-2 border-b border-gray-100 pb-3 last:border-b-0">
+                <div className="flex gap-2">
+                  <Select
+                    options={mediaTypeOptions}
+                    placeholder="Type"
+                    {...register(`media.${index}.mediaType`)}
+                    error={errors.media?.[index]?.mediaType?.message}
+                    className="w-32"
+                  />
+                  <Input
+                    placeholder="URL"
+                    {...register(`media.${index}.url`)}
+                    error={errors.media?.[index]?.url?.message}
+                    className="flex-1"
+                  />
+                  <Input
+                    placeholder="Caption (optional)"
+                    {...register(`media.${index}.caption`)}
+                    className="w-40"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => remove(index)}
+                  >
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </Button>
+                </div>
+                {/* Media Preview Card */}
+                {watch(`media.${index}.url`) && (
+                  <div className="mt-2 border border-gray-200 rounded-lg p-2.5 bg-gray-50 flex items-center gap-3 shadow-sm">
+                    {watch(`media.${index}.mediaType`) === "image" ? (
+                      <img
+                        src={watch(`media.${index}.url`)}
+                        alt="Preview"
+                        className="h-12 w-12 rounded object-cover border border-gray-200"
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = "none";
+                        }}
+                      />
+                    ) : watch(`media.${index}.mediaType`) === "video" ? (
+                      <div className="h-12 w-12 rounded bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-500 border border-gray-205">
+                        Video
+                      </div>
+                    ) : (
+                      <div className="h-12 w-12 rounded bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-500 border border-gray-205">
+                        Link
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-semibold text-gray-700 truncate">{watch(`media.${index}.url`)}</p>
+                      {watch(`media.${index}.caption`) && (
+                        <p className="text-xs text-gray-400 truncate">{watch(`media.${index}.caption`)}</p>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
             <Button

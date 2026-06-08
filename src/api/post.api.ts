@@ -25,4 +25,7 @@ export const postApi = {
 
   delete: (postId: string) =>
     axiosInstance.delete(`/posts/${postId}`),
+
+  react: (postId: string, reactionType: string) =>
+    axiosInstance.post(`/posts/${postId}/react`, { reactionType }),
 };

@@ -10,6 +10,7 @@ import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import { toast } from "sonner";
 
 const CAREER_LABELS: Record<string, string> = {
   corporate: "Corporate",
@@ -23,6 +24,22 @@ const CAREER_LABELS: Record<string, string> = {
 export default function AlumniProfile() {
   const [alumni, setAlumni] = useState<Alumni | null>(null);
   const [loading, setLoading] = useState(true);
+  const [toggling, setToggling] = useState(false);
+
+  const toggleMentorshipStatus = async () => {
+    if (!alumni) return;
+    setToggling(true);
+    const newStatus = !alumni.willingToMentor;
+    try {
+      await alumniApi.updateMe({ willingToMentor: newStatus });
+      setAlumni({ ...alumni, willingToMentor: newStatus });
+      toast.success(newStatus ? "You are now willing to mentor students!" : "Mentorship status disabled.");
+    } catch {
+      toast.error("Failed to update mentorship status.");
+    } finally {
+      setToggling(false);
+    }
+  };
 
   useEffect(() => {
     async function fetchProfile() {
@@ -96,6 +113,31 @@ export default function AlumniProfile() {
             </Link>
           }
         />
+
+        {/* Mentorship Status Card */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex items-center justify-between transition-all duration-300">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900">Mentorship Availability</h3>
+            <p className="text-xs text-gray-500 mt-1">
+              {alumni.willingToMentor
+                ? "Students can see you in the mentors list and send mentorship request messages."
+                : "You are currently hidden from the mentors directory."}
+            </p>
+          </div>
+          <button
+            onClick={toggleMentorshipStatus}
+            disabled={toggling}
+            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
+              alumni.willingToMentor ? "bg-green-600" : "bg-gray-200"
+            }`}
+          >
+            <span
+              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                alumni.willingToMentor ? "translate-x-5" : "translate-x-0"
+              }`}
+            />
+          </button>
+        </div>
 
         <InfoSection title="Academic Info">
           <div className="grid gap-4 sm:grid-cols-2">

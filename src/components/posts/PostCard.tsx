@@ -22,7 +22,7 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
   const author = typeof post.author === "object" ? post.author : null;
   const authorName = author?.email?.split("@")[0] || "User";
 
-  const isOwn = author?.id === user?.id;
+  const isOwn = author?.email && user?.email && author.email === user.email;
 
   const handleDelete = async () => {
     if (!confirm("Delete this post?")) return;

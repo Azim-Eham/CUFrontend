@@ -167,7 +167,7 @@ export default function EditAlumniProfile() {
   }));
 
   return (
-    <PageWrapper maxWidth="md">
+    <PageWrapper maxWidth="md" className="page-enter">
       <h1 className="mb-6 text-2xl font-bold text-gray-900">Edit Profile</h1>
       <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
         <Card>

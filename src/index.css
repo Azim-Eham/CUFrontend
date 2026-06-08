@@ -1,28 +1,172 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
-  --color-primary-950: #0f172a;
+  /* ─── Primary palette: Deep navy → Vivid blue ─── */
+  --color-primary-50: #eef4ff;
+  --color-primary-100: #d9e5ff;
+  --color-primary-200: #bccdff;
+  --color-primary-300: #8eabff;
+  --color-primary-400: #597eff;
+  --color-primary-500: #3355ff;
+  --color-primary-600: #1a33f5;
+  --color-primary-700: #1425e0;
+  --color-primary-800: #1620b5;
+  --color-primary-900: #18218e;
+  --color-primary-950: #0c1033;
 
+  /* ─── Accent palette: Warm amber/gold ─── */
+  --color-accent-300: #fcd34d;
   --color-accent-400: #fbbf24;
   --color-accent-500: #f59e0b;
   --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
 
+  /* ─── Surfaces ─── */
   --color-surface: #f8fafc;
   --color-surface-dark: #f1f5f9;
+  --color-surface-elevated: #ffffff;
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* ─── Typography ─── */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
+/* ─── Base styles ─── */
 body {
   @apply bg-surface text-gray-900 font-sans antialiased;
+}
+
+/* ─── Smooth scrolling ─── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ─── Selection highlight ─── */
+::selection {
+  background-color: rgba(51, 85, 255, 0.15);
+  color: #0c1033;
+}
+
+/* ─── Focus ring utility ─── */
+*:focus-visible {
+  outline: 2px solid #3355ff;
+  outline-offset: 2px;
+}
+
+/* ─── Smooth page transitions ─── */
+.page-enter {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Glassmorphism utility ─── */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(12, 16, 51, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ─── Gradient text utility ─── */
+.gradient-text {
+  background: linear-gradient(135deg, #3355ff 0%, #8eabff 50%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Animated gradient background ─── */
+.gradient-animated {
+  background: linear-gradient(
+    135deg,
+    #0c1033 0%,
+    #1425e0 25%,
+    #0c1033 50%,
+    #18218e 75%,
+    #0c1033 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ─── Floating animation ─── */
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* ─── Glow effect for important elements ─── */
+.glow {
+  box-shadow:
+    0 0 20px rgba(51, 85, 255, 0.15),
+    0 0 60px rgba(51, 85, 255, 0.08);
+}
+
+/* ─── Card hover lift ─── */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.08),
+    0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+/* ─── Pulse ring for CTAs ─── */
+.pulse-ring {
+  position: relative;
+}
+.pulse-ring::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid rgba(51, 85, 255, 0.3);
+  animation: pulseRing 2s ease-out infinite;
+}
+
+@keyframes pulseRing {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.08); }
+}
+
+/* ─── Custom scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(12, 16, 51, 0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(12, 16, 51, 0.3);
 }

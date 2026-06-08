@@ -30,6 +30,7 @@ export default function ManageAdmins() {
   const [loading, setLoading] = useState(true);
   const [inviteModal, setInviteModal] = useState(false);
   const [inviteLoading, setInviteLoading] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const {
     register,
@@ -55,6 +56,25 @@ export default function ManageAdmins() {
   }, [page, limit]);
 
   useEffect(() => {
+    setSelectedIds([]);
+  }, [page]);
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Delete ${selectedIds.length} selected admins?`)) return;
+    setLoading(true);
+    try {
+      await Promise.all(selectedIds.map((id) => adminApi.delete(id)));
+      toast.success("Selected admins deleted successfully");
+      setSelectedIds([]);
+      fetchAdmins();
+    } catch {
+      toast.error("Failed to delete some admins");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchAdmins();
   }, [fetchAdmins]);
 
@@ -74,14 +94,31 @@ export default function ManageAdmins() {
 
   return (
     <PageWrapper maxWidth="xl">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Manage Admins</h1>
+          <h1 className="text-2xl font-bold text-gray-900 animate-fadeInUp">Manage Admins</h1>
           <p className="mt-1 text-sm text-gray-500">View and invite administrators</p>
         </div>
-        <Button onClick={() => setInviteModal(true)}>
-          <UserPlus className="h-4 w-4" /> Invite Admin
-        </Button>
+        <div className="flex items-center gap-3">
+          {selectedIds.length > 0 && (
+            <div className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-lg py-1.5 px-3 animate-fadeInUp">
+              <span className="text-xs font-semibold text-red-700">
+                {selectedIds.length} selected
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs text-red-600 border-red-200 hover:bg-red-650 hover:text-red-700 py-1 h-auto"
+                onClick={handleBulkDelete}
+              >
+                Bulk Delete
+              </Button>
+            </div>
+          )}
+          <Button onClick={() => setInviteModal(true)}>
+            <UserPlus className="h-4 w-4" /> Invite Admin
+          </Button>
+        </div>
       </div>
 
       {loading ? (
@@ -95,8 +132,20 @@ export default function ManageAdmins() {
         <>
           <div className="space-y-3">
             {admins.map((admin) => (
-              <Card key={admin._id} className="p-4">
+              <Card key={admin._id} className={`p-4 transition-all duration-300 ${selectedIds.includes(admin.adminId) ? "bg-primary-50/40 border-primary-200" : ""}`}>
                 <div className="flex items-center gap-4">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(admin.adminId)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedIds((prev) => [...prev, admin.adminId]);
+                      } else {
+                        setSelectedIds((prev) => prev.filter((id) => id !== admin.adminId));
+                      }
+                    }}
+                    className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer mr-1"
+                  />
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-sm font-semibold text-red-700">
                     {admin.name.firstName[0]?.toUpperCase()}
                   </div>

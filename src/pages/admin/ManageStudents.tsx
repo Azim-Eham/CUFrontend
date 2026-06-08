@@ -27,6 +27,7 @@ export default function ManageStudents() {
   const debouncedSearch = useDebounce(searchTerm);
 
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const fetchStudents = useCallback(async () => {
     setLoading(true);
@@ -60,9 +61,29 @@ export default function ManageStudents() {
       const userId = typeof student.userId === "object" ? student.userId._id : student.userId;
       await studentApi.delete(student.studentId);
       toast.success("Student deleted");
+      setSelectedIds((prev) => prev.filter((id) => id !== student.studentId));
       fetchStudents();
     } catch {
       toast.error("Failed to delete student");
+    }
+  };
+
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [page, debouncedSearch]);
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Delete ${selectedIds.length} selected students?`)) return;
+    setLoading(true);
+    try {
+      await Promise.all(selectedIds.map((id) => studentApi.delete(id)));
+      toast.success("Selected students deleted successfully");
+      setSelectedIds([]);
+      fetchStudents();
+    } catch {
+      toast.error("Failed to delete some students");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,13 +96,28 @@ export default function ManageStudents() {
         </p>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <SearchBar
           value={searchTerm}
           onChange={setSearchTerm}
           placeholder="Search students by name, email, ID..."
           className="max-w-md"
         />
+        {selectedIds.length > 0 && (
+          <div className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-lg py-1.5 px-3 animate-fadeInUp">
+            <span className="text-xs font-semibold text-red-700">
+              {selectedIds.length} selected
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs text-red-600 border-red-200 hover:bg-red-650 hover:text-red-700 py-1 h-auto"
+              onClick={handleBulkDelete}
+            >
+              Bulk Delete
+            </Button>
+          </div>
+        )}
       </div>
 
       {loading ? (
@@ -98,6 +134,20 @@ export default function ManageStudents() {
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
+                    <th className="px-4 py-3 font-medium text-gray-650 w-12">
+                      <input
+                        type="checkbox"
+                        checked={students.length > 0 && selectedIds.length === students.length}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedIds(students.map((s) => s.studentId));
+                          } else {
+                            setSelectedIds([]);
+                          }
+                        }}
+                        className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+                      />
+                    </th>
                     <th className="px-4 py-3 font-medium text-gray-600">Student ID</th>
                     <th className="px-4 py-3 font-medium text-gray-600">Name</th>
                     <th className="px-4 py-3 font-medium text-gray-600">Email</th>
@@ -116,8 +166,22 @@ export default function ManageStudents() {
                     return (
                       <tr
                         key={student._id}
-                        className="hover:bg-gray-50 transition-colors"
+                        className={`hover:bg-gray-50 transition-colors ${selectedIds.includes(student.studentId) ? "bg-primary-50/40" : ""}`}
                       >
+                        <td className="px-4 py-3">
+                          <input
+                            type="checkbox"
+                            checked={selectedIds.includes(student.studentId)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedIds((prev) => [...prev, student.studentId]);
+                              } else {
+                                setSelectedIds((prev) => prev.filter((id) => id !== student.studentId));
+                              }
+                            }}
+                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+                          />
+                        </td>
                         <td className="px-4 py-3 font-mono text-xs text-gray-700">
                           {student.studentId}
                         </td>

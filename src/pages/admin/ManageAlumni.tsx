@@ -9,6 +9,7 @@ import Pagination from "@/components/shared/Pagination";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import EmptyState from "@/components/shared/EmptyState";
 import { alumniApi } from "@/api/alumni.api";
+import { userApi } from "@/api/user.api";
 import type { Alumni } from "@/types/alumni.types";
 import type { User } from "@/types/auth.types";
 import type { PaginatedResponse } from "@/types/api.types";
@@ -26,6 +27,7 @@ export default function ManageAlumni() {
   const debouncedSearch = useDebounce(searchTerm);
 
   const [selectedAlumni, setSelectedAlumni] = useState<Alumni | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const fetchAlumni = useCallback(async () => {
     setLoading(true);
@@ -49,6 +51,33 @@ export default function ManageAlumni() {
     fetchAlumni();
   }, [fetchAlumni]);
 
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [page, debouncedSearch]);
+
+  const handleBulkBlock = async () => {
+    if (!confirm(`Block ${selectedIds.length} selected alumni users?`)) return;
+    setLoading(true);
+    try {
+      await Promise.all(
+        selectedIds.map(async (id) => {
+          const item = alumni.find((a) => a._id === id);
+          if (item) {
+            const userId = typeof item.userId === "object" ? item.userId._id : item.userId;
+            await userApi.updateById(userId, { status: "blocked" });
+          }
+        })
+      );
+      toast.success("Selected alumni users blocked successfully");
+      setSelectedIds([]);
+      fetchAlumni();
+    } catch {
+      toast.error("Failed to block some alumni");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getCategoryLabel = (alumni: Alumni) => {
     const profile = alumni.alumniProfile;
     if (!profile) return "—";
@@ -64,13 +93,28 @@ export default function ManageAlumni() {
         </p>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <SearchBar
           value={searchTerm}
           onChange={setSearchTerm}
           placeholder="Search alumni by name, email, ID..."
-          className="max-w-md"
+          className="max-w-md w-full"
         />
+        {selectedIds.length > 0 && (
+          <div className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-lg py-1.5 px-3 animate-fadeInUp">
+            <span className="text-xs font-semibold text-red-700">
+              {selectedIds.length} selected
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs text-red-650 border-red-200 hover:bg-red-600 hover:text-red-700 py-1 h-auto"
+              onClick={handleBulkBlock}
+            >
+              Bulk Block
+            </Button>
+          </div>
+        )}
       </div>
 
       {loading ? (
@@ -90,9 +134,21 @@ export default function ManageAlumni() {
                   : null;
 
               return (
-                <Card key={item._id} className="p-4">
+                <Card key={item._id} className={`p-4 transition-all duration-300 ${selectedIds.includes(item._id) ? "bg-primary-50/40 border-primary-200" : ""}`}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(item._id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedIds((prev) => [...prev, item._id]);
+                          } else {
+                            setSelectedIds((prev) => prev.filter((id) => id !== item._id));
+                          }
+                        }}
+                        className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer mr-1"
+                      />
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-sm font-semibold text-amber-700">
                         {item.name[0]?.toUpperCase()}
                       </div>

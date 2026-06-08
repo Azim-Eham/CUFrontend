@@ -48,7 +48,7 @@ export default function LoginPage() {
 
   return (
     <PageWrapper maxWidth="sm" className="flex min-h-[calc(100vh-12rem)] items-center justify-center">
-      <Card className="w-full">
+      <Card className="w-full glass shadow-xl border-white/40">
         <CardHeader>
           <CardTitle className="text-center text-2xl">Log in to CUPC</CardTitle>
         </CardHeader>

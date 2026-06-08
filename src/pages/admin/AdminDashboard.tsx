@@ -151,6 +151,88 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {/* SVG/CSS Charts Section */}
+      <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+        {/* Registration Trend Chart */}
+        <Card className="p-6">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">User Registrations Trend</h3>
+          <div className="relative h-48 w-full">
+            <svg viewBox="0 0 500 200" className="w-full h-full">
+              <defs>
+                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#3355ff" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="#3355ff" stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+              <line x1="40" y1="20" x2="480" y2="20" stroke="#f1f5f9" strokeWidth="1" />
+              <line x1="40" y1="70" x2="480" y2="70" stroke="#f1f5f9" strokeWidth="1" />
+              <line x1="40" y1="120" x2="480" y2="120" stroke="#f1f5f9" strokeWidth="1" />
+              <line x1="40" y1="170" x2="480" y2="170" stroke="#cbd5e1" strokeWidth="1" />
+
+              <path
+                d="M40 170 L40 150 L120 130 L200 100 L280 80 L360 50 L440 20 L440 170 Z"
+                fill="url(#chartGrad)"
+              />
+
+              <path
+                d="M40 150 L120 130 L200 100 L280 80 L360 50 L440 20"
+                fill="none"
+                stroke="#3355ff"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+              <circle cx="40" cy="150" r="4" fill="#ffffff" stroke="#3355ff" strokeWidth="2" />
+              <circle cx="120" cy="130" r="4" fill="#ffffff" stroke="#3355ff" strokeWidth="2" />
+              <circle cx="200" cy="100" r="4" fill="#ffffff" stroke="#3355ff" strokeWidth="2" />
+              <circle cx="280" cy="80" r="4" fill="#ffffff" stroke="#3355ff" strokeWidth="2" />
+              <circle cx="360" cy="50" r="4" fill="#ffffff" stroke="#3355ff" strokeWidth="2" />
+              <circle cx="440" cy="20" r="4" fill="#ffffff" stroke="#3355ff" strokeWidth="2" />
+
+              <text x="40" y="190" fill="#94a3b8" fontSize="10" textAnchor="middle">Jan</text>
+              <text x="120" y="190" fill="#94a3b8" fontSize="10" textAnchor="middle">Feb</text>
+              <text x="200" y="190" fill="#94a3b8" fontSize="10" textAnchor="middle">Mar</text>
+              <text x="280" y="190" fill="#94a3b8" fontSize="10" textAnchor="middle">Apr</text>
+              <text x="360" y="190" fill="#94a3b8" fontSize="10" textAnchor="middle">May</text>
+              <text x="440" y="190" fill="#94a3b8" fontSize="10" textAnchor="middle">Jun</text>
+
+              <text x="30" y="174" fill="#94a3b8" fontSize="10" textAnchor="end">0</text>
+              <text x="30" y="124" fill="#94a3b8" fontSize="10" textAnchor="end">300</text>
+              <text x="30" y="74" fill="#94a3b8" fontSize="10" textAnchor="end">600</text>
+              <text x="30" y="24" fill="#94a3b8" fontSize="10" textAnchor="end">900</text>
+            </svg>
+          </div>
+        </Card>
+
+        {/* Categories Breakdown */}
+        <Card className="p-6">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Post Categories Breakdown</h3>
+          <div className="space-y-3.5">
+            {[
+              { name: "Blog", count: 45, percentage: "85%", color: "bg-blue-500" },
+              { name: "Opportunity", count: 28, percentage: "55%", color: "bg-green-500" },
+              { name: "Course", count: 18, percentage: "35%", color: "bg-purple-500" },
+              { name: "Seminar", count: 12, percentage: "25%", color: "bg-orange-500" },
+              { name: "General", count: 32, percentage: "60%", color: "bg-gray-500" },
+            ].map((cat) => (
+              <div key={cat.name} className="space-y-1">
+                <div className="flex justify-between text-xs font-semibold text-gray-700">
+                  <span>{cat.name}</span>
+                  <span>{cat.count} posts</span>
+                </div>
+                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${cat.color} transition-all duration-500`}
+                    style={{ width: cat.percentage }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
       {/* Recent Pending Posts */}
       <div className="mt-8">
         <div className="flex items-center justify-between mb-4">

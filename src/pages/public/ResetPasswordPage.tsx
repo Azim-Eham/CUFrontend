@@ -9,6 +9,7 @@ import PageWrapper from "@/components/layout/PageWrapper";
 import Card, { CardHeader, CardTitle } from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import PasswordStrength from "@/components/ui/PasswordStrength";
 import { authApi } from "@/api/auth.api";
 
 const resetSchema = z.object({
@@ -33,6 +34,7 @@ export default function ResetPasswordPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<ResetFormData>({
     resolver: zodResolver(resetSchema),
@@ -59,7 +61,7 @@ export default function ResetPasswordPage() {
   if (success) {
     return (
       <PageWrapper maxWidth="sm" className="flex min-h-[calc(100vh-12rem)] items-center justify-center">
-        <Card className="w-full text-center">
+        <Card className="w-full text-center glass shadow-xl border-white/40">
           <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
           <h2 className="mt-4 text-xl font-semibold text-gray-900">Password Reset Successful</h2>
           <p className="mt-2 text-sm text-gray-500">
@@ -77,7 +79,7 @@ export default function ResetPasswordPage() {
 
   return (
     <PageWrapper maxWidth="sm" className="flex min-h-[calc(100vh-12rem)] items-center justify-center">
-      <Card className="w-full">
+      <Card className="w-full glass shadow-xl border-white/40">
         <CardHeader>
           <CardTitle className="text-center text-2xl">Reset Password</CardTitle>
         </CardHeader>
@@ -103,6 +105,7 @@ export default function ResetPasswordPage() {
             {...register("newPassword")}
             error={errors.newPassword?.message}
           />
+          <PasswordStrength password={watch("newPassword")} />
           <Input
             label="Confirm Password"
             type="password"

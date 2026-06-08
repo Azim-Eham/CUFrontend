@@ -46,6 +46,7 @@ export default function CreatePost() {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -120,6 +121,10 @@ export default function CreatePost() {
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 placeholder:text-gray-400"
               placeholder="Write your post content..."
             />
+            <div className="mt-1 flex justify-between text-xs text-gray-400">
+              <span>Min. 1 character</span>
+              <span>{(watch("description") || "").length} characters</span>
+            </div>
             {errors.description?.message && (
               <p className="mt-1 text-xs text-red-600">{errors.description.message}</p>
             )}
@@ -148,7 +153,7 @@ export default function CreatePost() {
             <p className="text-sm text-gray-400">No media attached.</p>
           )}
           {mediaFields.map((field, index) => (
-            <div key={field.id} className="space-y-2 rounded-lg border border-gray-100 p-3">
+            <div key={field.id} className="space-y-2 rounded-lg border border-gray-100 p-3 bg-gray-50/50">
               <div className="flex items-center justify-between gap-2">
                 <div className="w-1/3">
                   <Select
@@ -180,6 +185,35 @@ export default function CreatePost() {
                 {...register(`media.${index}.caption`)}
                 placeholder="Add a caption"
               />
+              {/* Media Preview Card */}
+              {watch(`media.${index}.url`) && (
+                <div className="mt-2 border border-gray-250 rounded-lg p-2.5 bg-white flex items-center gap-3 shadow-sm">
+                  {watch(`media.${index}.mediaType`) === "image" ? (
+                    <img
+                      src={watch(`media.${index}.url`)}
+                      alt="Preview"
+                      className="h-12 w-12 rounded object-cover border border-gray-200"
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = "none";
+                      }}
+                    />
+                  ) : watch(`media.${index}.mediaType`) === "video" ? (
+                    <div className="h-12 w-12 rounded bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-500 border border-gray-200">
+                      Video
+                    </div>
+                  ) : (
+                    <div className="h-12 w-12 rounded bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-500 border border-gray-200">
+                      Link
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-gray-700 truncate">{watch(`media.${index}.url`)}</p>
+                    {watch(`media.${index}.caption`) && (
+                      <p className="text-xs text-gray-400 truncate">{watch(`media.${index}.caption`)}</p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>

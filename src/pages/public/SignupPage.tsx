@@ -11,6 +11,7 @@ import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
+import PasswordStrength from "@/components/ui/PasswordStrength";
 import {
   PROGRAMS,
   Genders,
@@ -144,8 +145,29 @@ export default function SignupPage() {
 
   return (
     <PageWrapper maxWidth="sm" className="py-12">
+      {/* Step Progress Bar */}
+      <div className="mb-8 flex items-center justify-between px-2">
+        <div className="flex items-center gap-2">
+          <div className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold transition-all duration-300 ${
+            step >= 1 ? "bg-primary-600 text-white shadow-sm" : "bg-gray-200 text-gray-600"
+          }`}>
+            1
+          </div>
+          <span className={`text-xs font-semibold ${step >= 1 ? "text-gray-900" : "text-gray-400"}`}>Choose Role</span>
+        </div>
+        <div className={`h-0.5 flex-1 mx-4 transition-all duration-500 ${step >= 2 ? "bg-primary-600" : "bg-gray-200"}`} />
+        <div className="flex items-center gap-2">
+          <div className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold transition-all duration-300 ${
+            step === 2 ? "bg-primary-600 text-white shadow-sm" : "bg-gray-200 text-gray-600"
+          }`}>
+            2
+          </div>
+          <span className={`text-xs font-semibold ${step === 2 ? "text-gray-900" : "text-gray-400"}`}>Details</span>
+        </div>
+      </div>
+
       {step === 1 ? (
-        <div className="space-y-6">
+        <Card className="w-full glass shadow-xl border-white/40 space-y-6">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900">Create an Account</h1>
             <p className="mt-2 text-sm text-gray-500">Choose your role to get started</p>
@@ -176,9 +198,9 @@ export default function SignupPage() {
               </div>
             </button>
           </div>
-        </div>
+        </Card>
       ) : (
-        <Card>
+        <Card className="w-full glass shadow-xl border-white/40">
           <CardHeader>
             <div className="flex items-center gap-3">
               <button
@@ -217,13 +239,16 @@ export default function SignupPage() {
                   {...studentForm.register("email")}
                   error={studentForm.formState.errors.email?.message}
                 />
-                <Input
-                  label="Password"
-                  type="password"
-                  placeholder="Min. 6 characters"
-                  {...studentForm.register("password")}
-                  error={studentForm.formState.errors.password?.message}
-                />
+                <div>
+                  <Input
+                    label="Password"
+                    type="password"
+                    placeholder="Min. 6 characters"
+                    {...studentForm.register("password")}
+                    error={studentForm.formState.errors.password?.message}
+                  />
+                  <PasswordStrength password={studentForm.watch("password")} />
+                </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-3">
                 <Input
@@ -296,13 +321,16 @@ export default function SignupPage() {
                   {...alumniForm.register("email")}
                   error={alumniForm.formState.errors.email?.message}
                 />
-                <Input
-                  label="Password"
-                  type="password"
-                  placeholder="Min. 6 characters"
-                  {...alumniForm.register("password")}
-                  error={alumniForm.formState.errors.password?.message}
-                />
+                <div>
+                  <Input
+                    label="Password"
+                    type="password"
+                    placeholder="Min. 6 characters"
+                    {...alumniForm.register("password")}
+                    error={alumniForm.formState.errors.password?.message}
+                  />
+                  <PasswordStrength password={alumniForm.watch("password")} />
+                </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Select
