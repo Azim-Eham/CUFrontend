@@ -56,7 +56,7 @@ export default function EditAlumniProfile() {
     reset,
     formState: { errors },
   } = useForm<AlumniFormData>({
-    resolver: zodResolver(alumniSchema),
+    resolver: zodResolver(alumniSchema) as any,
     defaultValues: {
       name: "",
       gender: "",
@@ -169,7 +169,7 @@ export default function EditAlumniProfile() {
   return (
     <PageWrapper maxWidth="md">
       <h1 className="mb-6 text-2xl font-bold text-gray-900">Edit Profile</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>

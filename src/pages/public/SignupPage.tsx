@@ -28,12 +28,12 @@ const baseSchema = z.object({
 });
 
 const studentSchema = baseSchema.extend({
-  currentProgram: z.enum(PROGRAMS, { errorMap: () => ({ message: "Required" }) }),
+  currentProgram: z.enum(PROGRAMS, { error: "Required" }),
   currentYear: z.string().min(1, "Required"),
 });
 
 const alumniSchema = baseSchema.extend({
-  gender: z.enum(Genders, { errorMap: () => ({ message: "Required" }) }),
+  gender: z.enum(Genders, { error: "Required" }),
   graduationYear: z.coerce.number().min(1900, "Invalid year"),
   contactNumber: z.string().min(1, "Contact number is required"),
   willingToMentor: z.boolean(),
@@ -52,12 +52,12 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
 
   const studentForm = useForm<StudentFormData>({
-    resolver: zodResolver(studentSchema),
+    resolver: zodResolver(studentSchema) as any,
     defaultValues: { currentYear: "" },
   });
 
   const alumniForm = useForm<AlumniFormData>({
-    resolver: zodResolver(alumniSchema),
+    resolver: zodResolver(alumniSchema) as any,
     defaultValues: { willingToMentor: false },
   });
 
@@ -273,7 +273,7 @@ export default function SignupPage() {
               </Button>
             </form>
           ) : (
-            <form onSubmit={alumniForm.handleSubmit(handleAlumniSubmit)} className="space-y-4">
+            <form onSubmit={alumniForm.handleSubmit(handleAlumniSubmit as any)} className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <Input
                   label="Student ID"

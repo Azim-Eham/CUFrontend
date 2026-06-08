@@ -39,7 +39,7 @@ import ManageUsers from "@/pages/admin/ManageUsers";
 import ManageAdmins from "@/pages/admin/ManageAdmins";
 import AdminSettings from "@/pages/admin/AdminSettings";
 
-import PostDetailPage from "@/pages/shared/postDetailPage";
+import PostDetailPage from "@/pages/shared/PostDetailPage";
 import NotFound from "@/pages/shared/NotFound";
 
 function PublicLayout() {

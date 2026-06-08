@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { postApi } from "@/api/post.api";
 import type { Post } from "@/types/post.types";
 import PageWrapper from "@/components/layout/PageWrapper";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 export default function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
+  const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,9 +33,9 @@ export default function PostDetailPage() {
 
   return (
     <PageWrapper maxWidth="md">
-      <Link to={-1} className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6">
+      <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6">
         <ArrowLeft className="h-4 w-4" /> Back
-      </Link>
+      </button>
 
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
         <div className="flex items-center gap-3 mb-4">

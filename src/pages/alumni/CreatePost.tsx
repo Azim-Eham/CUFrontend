@@ -61,7 +61,7 @@ export default function CreatePost() {
         tags: data.tags
           ? data.tags.split(",").map((t) => t.trim()).filter(Boolean)
           : [],
-        media: data.media.length > 0 ? data.media : undefined,
+        media: data.media.length > 0 ? (data.media as any) : undefined,
       });
       toast.success("Post created successfully");
       navigate("/alumni");

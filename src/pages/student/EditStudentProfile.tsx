@@ -53,7 +53,7 @@ export default function EditStudentProfile() {
     reset,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: {
       socialMedia: [],
       achievements: [],
@@ -149,7 +149,7 @@ export default function EditStudentProfile() {
     <PageWrapper maxWidth="md">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit Profile</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">Basic Info</h2>
           <Input label="Full Name" {...register("name")} error={errors.name?.message} />
