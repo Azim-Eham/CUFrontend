@@ -225,7 +225,9 @@ export default function ManageAlumni() {
               </div>
               <div className="flex items-center gap-2 text-gray-600">
                 <MapPin className="h-4 w-4" />
-                {selectedAlumni.location?.city}, {selectedAlumni.location?.country}
+                {selectedAlumni.location?.city && selectedAlumni.location?.country
+                  ? `${selectedAlumni.location.city}, ${selectedAlumni.location.country}`
+                  : "—"}
               </div>
               <div className="text-gray-600">
                 Graduated: {selectedAlumni.graduationYear}

@@ -32,8 +32,12 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
+    const isEmail = data.email.includes("@");
+    const payload = isEmail
+      ? { email: data.email, password: data.password }
+      : { id: data.email, password: data.password };
     try {
-      await login({ email: data.email, password: data.password });
+      await login(payload);
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||

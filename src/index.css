@@ -15,6 +15,9 @@
   --color-primary-950: #0c1033;
 
   /* ─── Accent palette: Warm amber/gold ─── */
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
   --color-accent-300: #fcd34d;
   --color-accent-400: #fbbf24;
   --color-accent-500: #f59e0b;

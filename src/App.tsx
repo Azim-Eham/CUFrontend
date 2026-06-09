@@ -43,6 +43,7 @@ const ManageAdmins = lazy(() => import("@/pages/admin/ManageAdmins"));
 const AdminSettings = lazy(() => import("@/pages/admin/AdminSettings"));
 
 const PostDetailPage = lazy(() => import("@/pages/shared/PostDetailPage"));
+const EditPostPage = lazy(() => import("@/pages/shared/EditPostPage"));
 const NotFound = lazy(() => import("@/pages/shared/NotFound"));
 
 function PageSuspense({ children }: { children: React.ReactNode }) {
@@ -160,6 +161,7 @@ function App() {
             }
           >
             <Route path="/posts/:postId" element={<PostDetailPage />} />
+            <Route path="/posts/:postId/edit" element={<EditPostPage />} />
           </Route>
 
           <Route path="*" element={<PageSuspense><NotFound /></PageSuspense>} />

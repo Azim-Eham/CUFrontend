@@ -81,7 +81,7 @@ export default function AlumniProfile() {
       ? `${alumni.location.city}, ${alumni.location.country}`
       : undefined;
 
-  const careerInfo = alumni.alumniProfile;
+  const careerInfo = alumni.alumniProfile || {};
 
   const hasCareerInfo =
     (careerInfo.corporateInfo?.length ?? 0) > 0 ||

@@ -124,8 +124,8 @@ export default function PostDetailPage() {
             <p className="text-xs text-gray-500">{post.authorRole && <span className="capitalize">{post.authorRole}</span>} · {timeAgo(post.createdAt)}</p>
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${POST_TYPE_COLORS[post.type]}`}>
-              {POST_TYPE_LABELS[post.type]}
+            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${POST_TYPE_COLORS[post.type] || ""}`}>
+              {POST_TYPE_LABELS[post.type] || post.type}
             </span>
             <Button
               variant="ghost"
