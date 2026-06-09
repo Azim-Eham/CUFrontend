@@ -127,7 +127,7 @@ export default function AlumniDashboard() {
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
+    if (hour < 12) return "Welcome Back";
     if (hour < 18) return "Good afternoon";
     return "Good evening";
   };
@@ -138,20 +138,20 @@ export default function AlumniDashboard() {
 
   return (
     <PageWrapper>
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight animate-fadeInUp">
+      <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-lg sm:text-2xl font-bold text-gray-900 tracking-tight animate-fadeInUp">
             {getGreeting()}, {name || "Alumni"}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-gray-500">
             {activeTab === "posts"
               ? "Manage your contributions and help guide students"
               : "Review and respond to mentorship requests from current students"}
           </p>
         </div>
         {activeTab === "posts" && (
-          <Link to="/alumni/posts/create">
-            <Button>
+          <Link to="/alumni/posts/create" className="shrink-0 self-start">
+            <Button size="sm" className="sm:px-4 sm:py-2 sm:text-sm">
               <Plus className="h-4 w-4" />
               Create Post
             </Button>

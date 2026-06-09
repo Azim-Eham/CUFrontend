@@ -38,24 +38,24 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-      <div className="p-5">
+      <div className="p-4 sm:p-5">
         {/* Header */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-sm font-semibold text-primary-700">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-primary-100 text-xs sm:text-sm font-semibold text-primary-700 shrink-0">
               {authorName[0]?.toUpperCase()}
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">{authorName}</p>
-              <p className="text-xs text-gray-500">
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">{authorName}</p>
+              <p className="text-[11px] sm:text-xs text-gray-500">
                 {post.authorRole && <span className="capitalize">{post.authorRole}</span>}
                 {" · "}
                 {timeAgo(post.createdAt)}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${POST_TYPE_COLORS[post.type] || ""}`}>
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] sm:text-xs font-medium ${POST_TYPE_COLORS[post.type] || ""}`}>
               {POST_TYPE_LABELS[post.type] || post.type}
             </span>
             {isOwn && (
@@ -94,18 +94,18 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
         {/* Content */}
         <Link to={`/posts/${post._id}`} className="block mt-3">
           {post.title && (
-            <h3 className="text-lg font-semibold text-gray-900 hover:text-primary-700 transition-colors">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 hover:text-primary-700 transition-colors leading-snug">
               {post.title}
             </h3>
           )}
-          <p className="mt-1 text-sm text-gray-600 line-clamp-3">{post.description}</p>
+          <p className="mt-1 text-xs sm:text-sm text-gray-600 line-clamp-3 leading-relaxed">{post.description}</p>
         </Link>
 
         {/* Tags */}
         {post.tags.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {post.tags.map((tag) => (
-              <span key={tag} className="rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+              <span key={tag} className="rounded-md bg-gray-100 px-2 py-0.5 text-[11px] sm:text-xs text-gray-600">
                 #{tag}
               </span>
             ))}
@@ -113,7 +113,7 @@ export default function PostCard({ post, onDeleted }: PostCardProps) {
         )}
 
         {/* Reactions & Comments */}
-        <div className="mt-4 flex items-center gap-4 border-t border-gray-100 pt-3">
+        <div className="mt-3 sm:mt-4 flex items-center gap-4 border-t border-gray-100 pt-3">
           <div className="flex items-center gap-2">
             {Object.entries(post.reactionCounts).map(([type, count]) =>
               count > 0 ? (
