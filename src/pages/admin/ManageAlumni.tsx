@@ -16,7 +16,7 @@ import type { PaginatedResponse } from "@/types/api.types";
 import { usePagination } from "@/hooks/usePagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import { toast } from "sonner";
-import { Eye, Mail, Building2, MapPin } from "lucide-react";
+import { Eye, Mail, Building2, MapPin, Trash2 } from "lucide-react";
 
 export default function ManageAlumni() {
   const { page, limit, goToPage } = usePagination(1, 10);
@@ -38,7 +38,11 @@ export default function ManageAlumni() {
         searchTerm: debouncedSearch || undefined,
       });
       const data: PaginatedResponse<Alumni> = res.data;
-      setAlumni(data.data.result);
+      const activeAlumni = data.data.result.filter((item) => {
+        const user = typeof item.userId === "object" ? item.userId : null;
+        return user && user.status !== "blocked";
+      });
+      setAlumni(activeAlumni);
       setMeta({ total: data.data.meta.total, totalPage: data.data.meta.totalPage });
     } catch {
       toast.error("Failed to fetch alumni");
@@ -78,6 +82,43 @@ export default function ManageAlumni() {
     }
   };
 
+  const handleDelete = async (item: Alumni) => {
+    if (!confirm(`Delete alumni ${item.name}?`)) return;
+    setLoading(true);
+    try {
+      await userApi.delete(item.studentId);
+      toast.success("Alumni deleted successfully");
+      setSelectedIds((prev) => prev.filter((id) => id !== item._id));
+      fetchAlumni();
+    } catch {
+      toast.error("Failed to delete alumni");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Delete ${selectedIds.length} selected alumni?`)) return;
+    setLoading(true);
+    try {
+      await Promise.all(
+        selectedIds.map(async (id) => {
+          const item = alumni.find((a) => a._id === id);
+          if (item) {
+            await userApi.delete(item.studentId);
+          }
+        })
+      );
+      toast.success("Selected alumni deleted successfully");
+      setSelectedIds([]);
+      fetchAlumni();
+    } catch {
+      toast.error("Failed to delete some alumni");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getCategoryLabel = (alumni: Alumni) => {
     const profile = alumni.alumniProfile;
     if (!profile) return "—";
@@ -112,6 +153,14 @@ export default function ManageAlumni() {
               onClick={handleBulkBlock}
             >
               Bulk Block
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs text-red-600 border-red-200 hover:bg-red-50 py-1 h-auto"
+              onClick={handleBulkDelete}
+            >
+              Bulk Delete
             </Button>
           </div>
         )}
@@ -170,13 +219,23 @@ export default function ManageAlumni() {
                         </div>
                       </div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedAlumni(item)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedAlumni(item)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        onClick={() => handleDelete(item)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </Card>
               );

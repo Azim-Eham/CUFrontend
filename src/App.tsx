@@ -1,6 +1,6 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
-import { useEffect, Suspense, lazy } from "react";
+import { useEffect, Suspense, lazy, useState } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import useKeepAlive from "@/hooks/useKeepAlive";
 
@@ -52,7 +52,7 @@ function PageSuspense({ children }: { children: React.ReactNode }) {
 
 function PublicLayout() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col pb-16 md:pb-0">
       <Navbar />
       <div className="flex-1">
         <PageSuspense>
@@ -65,11 +65,13 @@ function PublicLayout() {
 }
 
 function AdminLayout() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navbar />
+    <div className="flex min-h-screen flex-col pb-16 md:pb-0">
+      <Navbar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
       <div className="flex flex-1">
-        <AdminSidebar />
+        <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <div className="flex-1 overflow-auto">
           <PageSuspense>
             <Outlet />
@@ -93,15 +95,19 @@ function App() {
       <BrowserRouter>
         <Toaster position="top-right" richColors />
         <Routes>
-          {/* Public routes */}
+          {/* Guest-only routes */}
           <Route element={<PublicRoute><PublicLayout /></PublicRoute>}>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/mentors" element={<MentorsPage />} />
             <Route path="/admin/register" element={<AdminRegisterPage />} />
+          </Route>
+
+          {/* Publicly accessible routes */}
+          <Route element={<PublicLayout />}>
+            <Route path="/mentors" element={<MentorsPage />} />
           </Route>
 
           {/* Student routes */}
